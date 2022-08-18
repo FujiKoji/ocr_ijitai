@@ -17,11 +17,7 @@ jpn = langs.index('jpn')
 
 # lang_setting = langs[jpn]+'+'+langs[ipa]
 lang_setting = langs[ipa]
- 
-# 関数：OpenCVの画像を、jupyter notebook にインライン表示する
-def display_cv_image(image, format='.png'):
-    decoded_bytes = cv2.imencode(format, image)[1].tobytes()
-    display.display(display.Image(data=decoded_bytes))
+
 
 print(lang_setting)
 # 画像を認識
