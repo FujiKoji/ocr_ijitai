@@ -37,16 +37,16 @@ loader_train = DataLoader(ds_train, batch_size=64, shuffle=True)
 loader_test = DataLoader(ds_test, batch_size=18000, shuffle=False)
 
 #メモリが大きいため必要ない変数を削除
-# del(x_all)
-# del(y_all)
-# del(X_train)
-# del(X_test)
-# del(y_train)
-# del(y_test)
-# del(ds_test)
-# del(ds_train)
-# del(mnist_X)
-# del(mnist_y)
+del(x_all)
+del(y_all)
+del(X_train)
+del(X_test)
+del(y_train)
+del(y_test)
+del(ds_test)
+del(ds_train)
+del(mnist_X)
+del(mnist_y)
 
 # 3. ネットワークの構築 
 from torch import nn
