@@ -7,8 +7,8 @@ import matplotlib.pyplot as plt
 mnist_X, mnist_y = fetch_openml('mnist_784', version=1, data_home=".", return_X_y=True)
 
 #RGB値を正規化する
-x_all = mnist_X.astype(np.float32).to_numpy()[0:10000] / 255
-y_all = mnist_y.astype(np.int32).to_numpy()[0:10000]
+x_all = mnist_X.astype(np.float32).to_numpy() / 255
+y_all = mnist_y.astype(np.int32).to_numpy()
 
 #学習データの中身を確認
 plt.imshow(x_all[0].reshape(28,28),cmap='gray')
@@ -33,20 +33,20 @@ ds_train = TensorDataset(X_train, y_train)
 ds_test = TensorDataset(X_test, y_test)
  
 #データセットのミニバッチサイズを指定した、Dataloaderを作成
-loader_train = DataLoader(ds_train, batch_size=2048, shuffle=True)
-loader_test = DataLoader(ds_test, batch_size=64, shuffle=False)
+loader_train = DataLoader(ds_train, batch_size=64, shuffle=True)
+loader_test = DataLoader(ds_test, batch_size=18000, shuffle=False)
 
 #メモリが大きいため必要ない変数を削除
-del(x_all)
-del(y_all)
-del(X_train)
-del(X_test)
-del(y_train)
-del(y_test)
-del(ds_test)
-del(ds_train)
-del(mnist_X)
-del(mnist_y)
+# del(x_all)
+# del(y_all)
+# del(X_train)
+# del(X_test)
+# del(y_train)
+# del(y_test)
+# del(ds_test)
+# del(ds_train)
+# del(mnist_X)
+# del(mnist_y)
 
 # 3. ネットワークの構築 
 from torch import nn
@@ -97,7 +97,6 @@ def test():
     for data, target in loader_test:
         data, target = Variable(data), Variable(target)  # 微分可能に変換
         output = model(data)  # 入力dataをinputし、出力を求める
-
         # 推論する
         pred = output.data.max(1, keepdim=True)[1]  # 出力ラベルを求める
         correct += pred.eq(target.data.view_as(pred)).sum()  # 正解と一緒だったらカウントアップ
@@ -105,3 +104,13 @@ def test():
     # 正解率を出力
     data_num = len(loader_test.dataset)  # データの総数
     print('\nテストデータの正解率: {}/{} ({:.0f}%)\n'.format(correct,data_num, 100. * correct / data_num))
+
+
+# 6. 学習と推論の実行
+for epoch in range(3):
+    train(epoch)
+
+if __name__ == '__main__':
+    for epock in range(3):
+        train(epoch)
+    test()
