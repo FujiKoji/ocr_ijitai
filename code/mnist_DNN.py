@@ -13,7 +13,6 @@ y_all = mnist_y.astype(np.int32).to_numpy()
 #学習データの中身を確認
 plt.imshow(x_all[0].reshape(28,28),cmap='gray')
 
-
 #データローダーの作成
 import torch
 from torch.utils.data import TensorDataset, DataLoader
