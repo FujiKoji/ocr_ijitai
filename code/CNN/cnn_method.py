@@ -3,23 +3,31 @@ import PIL.ImageDraw
 import PIL.ImageFont
 
 import numpy as np
-import matplotlib.pyplot as plt
 
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from torch.utils.data import TensorDataset, DataLoader
-import torch.optim as optim
-import torchvision
-import torchvision.transforms as transforms
 from torch.autograd import Variable
 from sklearn.model_selection import train_test_split
 #エラーが発生したため追加
 import os
 os.environ['KMP_DUPLICATE_LIB_OK']='TRUE'
 
+#画像のリサイズ
+def input_image(img_file):
+    img = PIL.Image.open(img_file)
+    (width, height) = (28,28)
+    img_resized = img.resize((width, height))
+    gray_img = img_resized.convert('L')
+    input_img = np.array([[np.array(gray_img).astype(np.float32) / 255]])
+    new_img = torch.Tensor(input_img)
 
-# 使うフォント，サイズ，描くテキストの設定
+    return new_img
+
+    
+
+# 文字画像データ生成
 class MakePicture:
     def __init__(self,font_file, font_size,text):
         self.font_file = font_file
@@ -65,7 +73,7 @@ class MakePicture:
         f.close()
 
 #CNNの実装
-def organaize(img_list_int,label_list):
+def organaize(img_list_int,label_list, batch_size, test_size):
     x = np.array(img_list_int).astype(np.float32) / 255
     y_all = np.array(label_list).astype(np.float32)
 
@@ -76,7 +84,7 @@ def organaize(img_list_int,label_list):
     x_all = np.array(x_all)
 
     #データを訓練とテストに分割
-    X_train, X_test, y_train, y_test = train_test_split(x_all, y_all, test_size=1/7, random_state=10)
+    X_train, X_test, y_train, y_test = train_test_split(x_all, y_all, test_size=test_size, random_state=10)
 
     #データをPyTorchのTensorに変換
     X_train = torch.Tensor(X_train)
@@ -89,8 +97,8 @@ def organaize(img_list_int,label_list):
     ds_test = TensorDataset(X_test, y_test)
 
     #データセットのミニバッチサイズを指定した、Dataloaderを作成
-    loader_train = DataLoader(ds_train, batch_size=32, shuffle=True)
-    loader_test = DataLoader(ds_test, batch_size=32, shuffle=False)
+    loader_train = DataLoader(ds_train, batch_size=batch_size, shuffle=True)
+    loader_test = DataLoader(ds_test, batch_size=batch_size, shuffle=False)
 
     return loader_train, loader_test, ds_train, ds_test
 
@@ -119,7 +127,7 @@ class Execution:
     def __init__(self, model, optimizer, criterion, loader_train, loader_test):
         self.model = model
         self.optimizer = optimizer
-        self.criteration = criterion
+        self.criterion = criterion
         self.loader_train = loader_train
         self.loader_test = loader_test
 
@@ -158,8 +166,8 @@ class Execution:
         train_loss_list = []
         test_loss_list = []
         for epoch in range(num_epochs):
-            train_loss = self.train(self.model, self.optimizer, self.criterion, self.loader_train)
-            test_loss = self.test(self.model, self.criterion, self.loader_test)
+            train_loss = self.train()
+            test_loss = self.test()
             print(f'Epoch [{epoch+1}], train_Loss : {train_loss:.4f}, test_Loss : {test_loss:.4f}')
             train_loss_list.append(train_loss)
             test_loss_list.append(test_loss)

@@ -1,10 +1,11 @@
 import cnn_method
+from cnn_method import input_image
 from cnn_method import Cnn, Execution
 import numpy as np
 import matplotlib.pyplot as plt
 import torch.nn as nn
 import torch.optim as optim
-from torch.utils.data import TensorDataset, DataLoader
+from torch.utils.data import DataLoader
 
 # グラフのスタイルを指定
 plt.style.use('seaborn-darkgrid')
@@ -35,7 +36,9 @@ for label in data_y: #「高」:0,「髙」:1 に対応
         label_list.append(1)
 f.close()
 
-loader_train, loader_test, ds_train, ds_test = cnn_method.organaize(img_list_int,label_list)
+batch_size = 32
+test_size = 1/7
+loader_train, loader_test, ds_train, ds_test = cnn_method.organaize(img_list_int, label_list, batch_size, test_size)
 
 #インスタンス化
 model = Cnn()
@@ -46,10 +49,10 @@ criterion = nn.CrossEntropyLoss()
 # 最適化手法を設定
 optimizer = optim.Adam(model.parameters())
 
-execution = Execution(model, optimizer, criterion, loader_train, loader_test)
-train_loss_list, test_loss_list = execution.run(model ,30, optimizer, criterion)
-
 num_epochs=30
+execution = Execution(model, optimizer, criterion, loader_train, loader_test)
+train_loss_list, test_loss_list = execution.run(num_epochs)
+
 fig, ax = plt.subplots(figsize=(8, 6), dpi=100)
 ax.plot(range(num_epochs), train_loss_list, c='b', label='train loss')
 ax.plot(range(num_epochs), test_loss_list, c='r', label='test loss')
@@ -72,3 +75,13 @@ for ii in range(10):
     ax.tick_params(labelbottom=False, labelleft=False, bottom=False, left=False)  
     ax.set_title(f"True: {targets[0].item()}, Prediction: {prediction.argmax().item()}", fontsize=20)
     plt.show()
+
+#新しい画像の読み取り
+img_file = "n201129271.png"
+new_img = input_image(img_file)
+model.eval()
+prediction = model(new_img)
+if prediction.argmax().item() == 0:
+    print("高")
+elif prediction.argmax().item() == 1:
+    print("髙")
