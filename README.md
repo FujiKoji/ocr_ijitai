@@ -9,8 +9,5 @@ The "ijitai" has the same meaning as "高" and "髙" but is a different form of 
 * scikit-learn 1.1.1
 
 # Author
-
-作成情報を列挙する
-
 * Koji Fujita
 * Kyoto University
