@@ -103,17 +103,18 @@ def organaize(img_list_int,label_list, batch_size, test_size):
     return loader_train, loader_test, ds_train, ds_test
 
 class Cnn(nn.Module):
-    def __init__(self):
+    def __init__(self, output_length):
+        self.output_length = output_length
         super().__init__()
-        self.conv1 = nn.Conv2d(1, 16, 5)  # 畳み込み層:(入力チャンネル数, フィルタ数、フィルタサイズ)
+        self.conv1 = nn.Conv2d(1, 8, 5)  # 畳み込み層:(入力チャンネル数, フィルタ数、フィルタサイズ)
         #出力画像サイズ24
         self.pool = nn.MaxPool2d((2, 2))  # プーリング層:（領域のサイズ, ストライド）
         #出力画像サイズ12
-        self.conv2 = nn.Conv2d(16, 16, 5)
+        self.conv2 = nn.Conv2d(8, 16, 5)
         #出力画像サイズ4
         self.fc1 = nn.Linear(16*4*4, 128)  # 全結合層
         self.dropout = nn.Dropout(p=0.5)  # ドロップアウト:(p=ドロップアウト率)
-        self.fc2 = nn.Linear(128, 2)
+        self.fc2 = nn.Linear(128, self.output_length)
     def forward(self, x):
         x1 = self.pool(F.relu(self.conv1(x)))
         x2 = self.pool(F.relu(self.conv2(x1)))
@@ -159,16 +160,19 @@ class Execution:
                 test_loss += loss.item()
             test_loss = test_loss / len(self.loader_test.dataset)
         data_num = len(self.loader_test.dataset)  # データの総数
+        correct_per = 100. * correct / data_num
         print('\nテストデータの正解率: {}/{} ({:.0f}%)\n'.format(correct,data_num, 100. * correct / data_num))
-        return test_loss
+        return test_loss, correct_per
 
     def run(self, num_epochs):
         train_loss_list = []
         test_loss_list = []
+        accuracy_rate_list = []
         for epoch in range(num_epochs):
             train_loss = self.train()
-            test_loss = self.test()
+            test_loss, correct_per = self.test()
             print(f'Epoch [{epoch+1}], train_Loss : {train_loss:.4f}, test_Loss : {test_loss:.4f}')
             train_loss_list.append(train_loss)
             test_loss_list.append(test_loss)
-        return train_loss_list, test_loss_list
+            accuracy_rate_list.append(correct_per)
+        return train_loss_list, test_loss_list, accuracy_rate_list
