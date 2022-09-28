@@ -45,7 +45,7 @@ test_size = 1/7
 loader_train, loader_test, ds_train, ds_test = cnn_method.organaize(img_list_int, label_list, batch_size, test_size)
 
 #インスタンス化
-model = Cnn(3)
+model = Cnn(len(texts)-1)
 
 # 損失関数の設定
 criterion = nn.CrossEntropyLoss()
