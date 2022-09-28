@@ -59,7 +59,7 @@ class MakePicture:
     #datファイル作成
     def write_to_dat(self,file_path_x,file_path_y, dimention_to_one):
         #画像データをdatファイルに書き込み
-        f=open(file_path_x,"a")
+        f=open(file_path_x,"a",encoding="utf-8")
         for data in dimention_to_one:
             f.write(str(data))
             f.write(" ")
