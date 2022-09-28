@@ -7,6 +7,7 @@ The "ijitai" has the same meaning as "高" and "髙" but is a different form of 
 * pillow 9.2.0
 * torch 1.12.1
 * scikit-learn 1.1.1
+* opencv-python 4.6.0.66
 
 # Author
 * Koji Fujita
