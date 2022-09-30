@@ -11,9 +11,9 @@ from torch.utils.data import DataLoader
 plt.style.use('seaborn-darkgrid')
 
 #作成したファイルの呼び出し
-file_path_x = "picture_data/datax_2.dat"
-file_path_y = "picture_data/datay_2.dat"
-file_path_info = "picture_data/info_2.dat"
+file_path_x = "picture_data/datax_1.dat"
+file_path_y = "picture_data/datay_1.dat"
+file_path_info = "picture_data/info_1.dat"
 
 #imgデータ読み込み
 f = open(file_path_x,"r")
@@ -53,7 +53,7 @@ criterion = nn.CrossEntropyLoss()
 # 最適化手法を設定
 optimizer = optim.Adam(model.parameters())
 
-num_epochs=50
+num_epochs=1
 execution = Execution(model, optimizer, criterion, loader_train, loader_test)
 train_loss_list, test_loss_list, accuracy_rate_list = execution.run(num_epochs)
 
@@ -92,19 +92,20 @@ for ii in range(20):
     plt.show()
 
 #新しい画像の読み取り
-# img_file = "write_1.png"
-# new_img = input_image(img_file)
-# model.eval()
-# prediction = model(new_img)
-# if prediction.argmax().item() == 0:
-#     fig, ax = plt.subplots(dpi=100)
-#     ax.imshow(np.array(new_img)[0][0])  # 各軸の順番を変更
-#     ax.tick_params(labelbottom=False, labelleft=False, bottom=False, left=False)  
-#     ax.set_title(f"Prediction: 0", fontsize=20)
-#     plt.show()
-# elif prediction.argmax().item() == 1:
-#     fig, ax = plt.subplots(dpi=100)
-#     ax.imshow(np.array(new_img)[0][0])  # 各軸の順番を変更
-#     ax.tick_params(labelbottom=False, labelleft=False, bottom=False, left=False)  
-#     ax.set_title(f"Prediction: 1", fontsize=20)
-#     plt.show()
+for ii in range(1,9):
+    img_file = f"test_img/test_{ii}.png"
+    new_img = input_image(img_file)
+    model.eval()
+    prediction = model(new_img)
+    if prediction.argmax().item() == 0:
+        fig, ax = plt.subplots(dpi=100)
+        ax.imshow(np.array(new_img)[0][0])  # 各軸の順番を変更
+        ax.tick_params(labelbottom=False, labelleft=False, bottom=False, left=False)  
+        ax.set_title(f"Prediction: 0", fontsize=20)
+        plt.show()
+    elif prediction.argmax().item() == 1:
+        fig, ax = plt.subplots(dpi=100)
+        ax.imshow(np.array(new_img)[0][0])  # 各軸の順番を変更
+        ax.tick_params(labelbottom=False, labelleft=False, bottom=False, left=False)  
+        ax.set_title(f"Prediction: 1", fontsize=20)
+        plt.show()
